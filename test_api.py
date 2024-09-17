@@ -25,18 +25,28 @@ def test_add_cart_product():
 @allure.feature("API")
 @allure.title("Изменение кол-ва товара в корзине.")
 @allure.description("Изменение кол-ва товара в корзине через API.")
-def test_changing_quantity_in_cart():
+def test_changing_quantity_in_cart1():
+    quantity = 10
     body = {"id": 3038460, "adData": {
         "item_list_name": "profile-bookmarks", "product_shelf": ""}}
     with allure.step("Добавление товара в корзину."):
-        response = requests.post(
+        response_add = requests.post(
             chitaigorod + "cart/product", headers=headers, json=body)
-    body = [{"id": 125362739, "quantity": 10}]
+        assert response_add.status_code == 200
+    with allure.step("Получение инфо о товаре в корзине"):
+        response_get_cart = requests.get(chitaigorod + "cart", headers=headers)
+        assert response_get_cart.status_code == 200
+        id_cart = response_get_cart.json()["products"][0]["id"]
+    body = [{"id": id_cart, "quantity": quantity}]
     with allure.step("Изменение количества товара."):
         response = requests.put(chitaigorod + "cart",
                                 headers=headers, json=body)
     with allure.step("Проверка статус кода"):
         assert response.status_code == 200
+    with allure.step("Проверка кол-ва товаров в корзине"):
+        response_get_cart = requests.get(chitaigorod + "cart", headers=headers)
+        quantity_cart = response_get_cart.json()["products"][0]["quantity"]
+        assert quantity_cart == quantity
 
 
 @allure.feature("API")
