@@ -82,7 +82,7 @@ def test_editing_personal_data():
                 "firstName": "Иван",
                 "middleName": "Иванович",
                 "phone": "79999999999",
-                "email": "yury.cash@yandex.ru",
+                "email": fake.email(),
                 "phoneCountry": ""}
         response = requests.patch(
             chitaigorod + "profile/personal-data", headers=headers, json=body)
